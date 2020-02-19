@@ -33,7 +33,8 @@ void usage(char * argv []){
               << "  -a vfcount    : LZD VF (Count Base)" << std::endl
               << "  -a vfclean    : LZD VF (Reset Base)" << std::endl
               << "  -a vfpre_no_stream   : LZD VF (Prefix Base)" << std::endl
-              << "  -a vfcount_no_stream : LZD VF (Count Base)" << std::endl;
+              << "  -a vfcount_no_stream : LZD VF (Count Base)" << std::endl
+              << "  -a lzd-seg    : LZD (raw segment)" << std::endl;
 
 }
 
@@ -41,6 +42,7 @@ namespace algo{
   std::string LZ78       = "lz78";
   std::string LZMW       = "lzmw";
   std::string LZD        = "lzd";
+  std::string LZD_SEGMENT = "lzd-seg";
   std::string LZVF_PRE   = "vfpre";
   std::string LZVF_COUNT = "vfcount";
   std::string LZVF_CLEAN = "vfclean";
@@ -83,7 +85,8 @@ int main(int argc, char * argv[]){
         algoname == algo::LZ78 ||
         algoname == algo::LZVF_PRE || algoname == algo::LZVF_COUNT ||
         algoname == algo::LZVF_CLEAN ||
-        algoname == algo::LZVF_PRE_NO_STREAM || algoname == algo::LZVF_COUNT_NO_STREAM
+        algoname == algo::LZVF_PRE_NO_STREAM || algoname == algo::LZVF_COUNT_NO_STREAM ||
+        algoname == algo::LZD_SEGMENT
         )){
     codeSize = 0;
     usage(argv);
@@ -99,7 +102,20 @@ int main(int argc, char * argv[]){
     std::string outSLP;
     LZFF::seq2vars(ff.seq, vars);
     slp2enc(vars, (unsigned int) s.size(), out_fname);
-  }else if (algoname == algo::LZMW) {
+  } else if (algoname == algo::LZD_SEGMENT){
+    UTIL::stringFromFile(inFile, s);
+    LZFF::LZD ff;
+    LZFF::ff_compress(s, ff);
+
+    std::ofstream outfile(out_fname.c_str());
+    //outfile.open(out_fname, std::ios::out);
+
+    for(unsigned int i=0; i < ff.seq.size(); i++){
+      outfile << i << "\t" << ff.seq[i].first << "\t" << ff.seq[i].second << std::endl;
+    }
+
+    outfile.close();
+  } else if (algoname == algo::LZMW) {
     LZFF::mw_compress(inFile, out_fname);
   } else if (algoname == algo::LZ78) {
     std::vector<std::pair<unsigned int, unsigned int> > vars;

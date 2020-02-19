@@ -11,8 +11,8 @@ if sys.platform == 'darwin':
     include = '/opt/local/include'
     lib = '/opt/local/lib'
 
-cxx = ARGUMENTS.get('cxx', '/usr/bin/clang++')
-cc = ARGUMENTS.get('cc', '/usr/bin/clang')
+cxx = ARGUMENTS.get('cxx', '/usr/bin/g++')
+cc = ARGUMENTS.get('cc', '/usr/bin/gcc')
 lib = ARGUMENTS.get('lib', lib) # /opt/local/lib for mac os
 include = ARGUMENTS.get('include', include) # /opt/local/include for mac os
 env = Environment(ENV = {'PATH' : os.environ['PATH']},
